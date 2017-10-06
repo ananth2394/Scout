@@ -28,7 +28,14 @@ public class Player extends scout.sim.Player {
     Point direction;
     boolean skipRow;
 
+
+    PlayerType type;
     List<Point> history;
+    Queue<Point> moves;
+
+    private enum PlayerType {
+        NW, NE, SE, SW;        
+    }
 
     private class PlayerState {
         // track board info, move history, enemy and safe locations
@@ -58,6 +65,8 @@ public class Player extends scout.sim.Player {
 
         enemyLocations = new ArrayList<>();
         safeLocations = new ArrayList<>();
+
+        moves = new LinkedList<>();
         gen = new Random(seed);
         this.t = t;
         this.n = n;
@@ -65,7 +74,7 @@ public class Player extends scout.sim.Player {
         if(Integer.parseInt(this.getID().substring(1)) % 4 == 0) {
             // Move NW
             this.direction = new Point(-1, -1);
-
+            this.type = PlayerType.NW;
             westEnd = 1;
             eastEnd = n/2;
             northEnd = 0;
@@ -73,6 +82,7 @@ public class Player extends scout.sim.Player {
         } else if(Integer.parseInt(this.getID().substring(1)) % 4 == 1) {
             // Move NE
             this.direction = new Point(-1, 1);
+            this.type = PlayerType.NE;
 
             westEnd = n/2 + 1;
             eastEnd = n;
@@ -81,6 +91,7 @@ public class Player extends scout.sim.Player {
         } else if(Integer.parseInt(this.getID().substring(1)) % 4 == 2) {
             // Move SE
             this.direction = new Point(1, 1);
+            this.type = PlayerType.SE;
 
             westEnd = n/2 + 1;
             eastEnd = n;
@@ -89,6 +100,7 @@ public class Player extends scout.sim.Player {
         } else if(Integer.parseInt(this.getID().substring(1)) % 4 == 3) {
             // Move SW
             this.direction = new Point(1, -1);
+            this.type = PlayerType.SW;
 
             westEnd = 1;
             eastEnd = n/2;
@@ -147,19 +159,19 @@ public class Player extends scout.sim.Player {
                 oriented = true;
             } else if (obj instanceof Outpost) {
                 Object data = ((Outpost) obj).getData();
-                if(Integer.parseInt(this.getID().substring(1)) % 4 == 0) {
+                if(this.type == PlayerType.NW) {
                     // Move NW
                     x = 0;
                     y = 0;
-                } else if(Integer.parseInt(this.getID().substring(1)) % 4 == 1) {
+                } else if(this.type == PlayerType.NE) {
                     // Move NE
                     x = 0;
                     y = n+1;
-                } else if(Integer.parseInt(this.getID().substring(1)) % 4 == 2) {
+                } else if(this.type == PlayerType.SE) {
                     // Move SE
                     x = n+1;
                     y = n+1;
-                } else if(Integer.parseInt(this.getID().substring(1)) % 4 == 3) {
+                } else if(this.type == PlayerType.SW) {
                     // Move SW
                     x = n+1;
                     y = 0;
@@ -179,190 +191,52 @@ public class Player extends scout.sim.Player {
             }
         }
 
-        
-        if(!newPhase) {
+        if(!moves.isEmpty()) {
+            Point ret = moves.poll();
+            x += ret.x;
+            y += ret.y;
+            return ret;
+        } else if(!newPhase) {
             if (nearbyIds.get(0).get(1) == null) {
                 //Up is null
-                if(Integer.parseInt(this.getID().substring(1)) % 4 == 0) {
+                if(this.type == PlayerType.NW) {
                     this.direction = new Point(0, -1);
-                } else if(Integer.parseInt(this.getID().substring(1)) % 4 == 1) {
+                } else if(this.type == PlayerType.NE) {
                     this.direction = new Point(0, 1);
                 }
             } else if (nearbyIds.get(1).get(0) == null) {
                 //Left is null
-                if(Integer.parseInt(this.getID().substring(1)) % 4 == 0) {
+                if(this.type == PlayerType.NW) {
                     this.direction = new Point(-1, 0);
-                } else if(Integer.parseInt(this.getID().substring(1)) % 4 == 3) {
+                } else if(this.type == PlayerType.SW) {
                     this.direction = new Point(1, 0);
                 }
             } else if (nearbyIds.get(1).get(2) == null) {
                 //Right is null
-                if(Integer.parseInt(this.getID().substring(1)) % 4 == 1) {
+                if(this.type == PlayerType.NE) {
                     this.direction = new Point(-1, 0);
-                } else if(Integer.parseInt(this.getID().substring(1)) % 4 == 2) {
+                } else if(this.type == PlayerType.SE) {
                     this.direction = new Point(1, 0);
                 }
             } else if (nearbyIds.get(2).get(1) == null) {
                 //Down is null
-                if(Integer.parseInt(this.getID().substring(1)) % 4 == 2) {
+                if(this.type == PlayerType.SE) {
                     this.direction = new Point(0, 1);
-                } else if(Integer.parseInt(this.getID().substring(1)) % 4 == 3) {
+                } else if(this.type == PlayerType.SW) {
                     this.direction = new Point(0, -1);
                 }
             }
             accY += this.direction.y;
             accX += this.direction.x;
         } else {
-            if(Integer.parseInt(this.getID().substring(1)) % 4 == 0) {
-                if(skipRow) {
-                    skipRow = false;
-                    x++;
-                    return new Point(1, 0);
-                }
-                if(rightDir) {
-                    // go right
-                    if(y >= eastEnd) {
-                        //x = x + 2 <= southEnd ? x + 2 : southEnd;
-                        if(x+2 >= southEnd) {
-                            newPhase = !newPhase;
-                        }
-                        x++;
-                        skipRow = true;
-                        rightDir = !rightDir;
-                        return new Point(1, 0);
-                    } else {
-                        y++;
-                        return new Point(0, 1);
-                    }
-                } else {
-                    // go left
-                    if(y <= westEnd) {
-                        //x = x - 2 >= southEnd ? x - 2 : southEnd;
-                        if(x+2 >= southEnd) {
-                            newPhase = !newPhase;
-                        }
-                        x++;
-                        skipRow = true;
-                        rightDir = !rightDir;
-                        return new Point(1, 0);
-                    } else {
-                        y--;
-                        return new Point(0, -1);
-                    }
-                }
-            } else if(Integer.parseInt(this.getID().substring(1)) % 4 == 1) {
-                if(skipRow) {
-                    skipRow = false;
-                    x++;
-                    return new Point(1, 0);
-                }
-                if(rightDir) {
-                    // go left
-                    if(y <= westEnd) {
-                        //x = x - 2 >= southEnd ? x - 2 : southEnd;
-                        if(x+2 >= southEnd) {
-                            newPhase = !newPhase;
-                        }
-                        x++;
-                        skipRow = true;
-                        rightDir = !rightDir;
-                        return new Point(1, 0);
-                    } else {
-                        y--;
-                        return new Point(0, -1);
-                    }
-                } else {
-                    // go right
-                    if(y >= eastEnd) {
-                        //x = x - 2 >= southEnd ? x - 2 : southEnd;
-                        if(x+2 <= northEnd) {
-                            newPhase = !newPhase;
-                        }
-                        x++;
-                        skipRow = true;
-                        rightDir = !rightDir;
-                        return new Point(1, 0);
-                    } else {
-                        y++;
-                        return new Point(0, 1);
-                    }
-                }
-            } else if(Integer.parseInt(this.getID().substring(1)) % 4 == 2) {
-                if(skipRow) {
-                    skipRow = false;
-                    x--;
-                    return new Point(-1, 0);
-                }
-                if(rightDir) {
-                    // go left
-                    if(y <= westEnd) {
-                        //x = x - 2 >= southEnd ? x - 2 : southEnd;
-                        if(x-2 <= northEnd) {
-                            newPhase = !newPhase;
-                        }
-                        x--;
-                        skipRow = true;
-
-                        rightDir = !rightDir;
-                        return new Point(-1, 0);
-                    } else {
-                        y--;
-                        return new Point(0, -1);
-                    }
-                } else {
-                    // go right
-                    if(y >= eastEnd) {
-                        //x = x - 2 >= southEnd ? x - 2 : southEnd;
-                        if(x-2 <= northEnd) {
-                            newPhase = !newPhase;
-                        }
-                        x--;
-                        skipRow = true;
-                        rightDir = !rightDir;
-                        return new Point(-1, 0);
-                    } else {
-                        y++;
-                        return new Point(0, 1);
-                    }
-                }
-            } else if(Integer.parseInt(this.getID().substring(1)) % 4 == 3) {
-                if(skipRow) {
-                    skipRow = false;
-                    x--;
-                    return new Point(-1, 0);
-                }
-                if(rightDir) {
-                    // go right
-                    if(y >= eastEnd) {
-                        //x = x - 2 >= southEnd ? x - 2 : southEnd;
-                        if(x-2 <= northEnd) {
-                            newPhase = !newPhase;
-                        }
-                        x--;
-                        skipRow = true;
-
-                        rightDir = !rightDir;
-                        return new Point(-1, 0);
-                    } else {
-                        y++;
-                        return new Point(0, 1);
-                    }
-                } else {
-                    // go left
-                    if(y <= westEnd) {
-                        //x = x - 2 >= southEnd ? x - 2 : southEnd;
-                        if(x-2 <= northEnd) {
-                            newPhase = !newPhase;
-                        }
-                        x--;
-                        skipRow = true;
-                        rightDir = !rightDir;
-                        return new Point(-1, 0);
-                    } else {
-                        y--;
-                        return new Point(0, -1);
-                    }
-                }
+            if(this.type == PlayerType.NW) {
+                return NWmove();
+            } else if(this.type == PlayerType.NE) {
+                return NEmove();
+            } else if(this.type == PlayerType.SE) {
+                return SEmove();
+            } else if(this.type == PlayerType.SW) {
+                return SWmove();
             }
         }
         //return x \in {-1,0,1}, y \in {-1,0,1}
@@ -371,11 +245,6 @@ public class Player extends scout.sim.Player {
 
 
     public Point NWmove() {
-        if(skipRow) {
-            skipRow = false;
-            x++;
-            return new Point(1, 0);
-        }
         if(rightDir) {
             // go right
             if(y >= eastEnd) {
@@ -384,7 +253,8 @@ public class Player extends scout.sim.Player {
                     newPhase = !newPhase;
                 }
                 x++;
-                skipRow = true;
+                moves.add(new Point(1, 0));
+                moves.add(new Point(1, 0));
                 rightDir = !rightDir;
                 return new Point(1, 0);
             } else {
@@ -399,7 +269,8 @@ public class Player extends scout.sim.Player {
                     newPhase = !newPhase;
                 }
                 x++;
-                skipRow = true;
+                moves.add(new Point(1, 0));
+                moves.add(new Point(1, 0));
                 rightDir = !rightDir;
                 return new Point(1, 0);
             } else {
@@ -423,7 +294,8 @@ public class Player extends scout.sim.Player {
                     newPhase = !newPhase;
                 }
                 x++;
-                skipRow = true;
+                moves.add(new Point(1, 0));
+                moves.add(new Point(1, 0));
                 rightDir = !rightDir;
                 return new Point(1, 0);
             } else {
@@ -438,7 +310,8 @@ public class Player extends scout.sim.Player {
                     newPhase = !newPhase;
                 }
                 x++;
-                skipRow = true;
+                moves.add(new Point(1, 0));
+                moves.add(new Point(1, 0));
                 rightDir = !rightDir;
                 return new Point(1, 0);
             } else {
@@ -529,7 +402,13 @@ public class Player extends scout.sim.Player {
     }
 
     private void convertRelativeToAbsolute() {
-        //TODO
+        for(Point p : enemyRelativeLocations) {
+            absSafe = new Point(x,y);
+            absSafe.x -= accX;
+            absSafe.y -= accY;
+
+            enemyLocations.add()
+        }
     }
 
     public void stub() {
