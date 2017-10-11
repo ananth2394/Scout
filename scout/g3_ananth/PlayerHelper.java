@@ -411,6 +411,13 @@ public class PlayerHelper {
         return result;
     }
 
+		public boolean moveToStage2(int time)
+		{
+			if(time<=50)
+				return true;
+			else
+			return false;
+		}
     public List<String> getAllValidMoves(ArrayList<ArrayList<ArrayList<String>>> nearbyIds) {
     	List<String> result = new ArrayList<String>();
     	for(int i = 0 ; i < 3; ++ i) {
@@ -426,12 +433,12 @@ public class PlayerHelper {
 		public List<String> getBestMoves(ArrayList<ArrayList<ArrayList<String>>> nearbyIds)
 		{
 			List<String> result = new ArrayList<String>();
-			int mn = 20;
+			int mx = 0;
     	for(int i = 0 ; i < 3; ++ i) {
             for(int j = 0 ; j < 3 ; ++ j) {
         		if (nearbyIds.get(i).get(j) != null) {
         			//result.add(ijToDirection(i,j));
-							mn = Math.min(this.explorer_grid.getLocation(new Point(i,j)),mn);
+							mx = Math.max(this.explorer_grid.getLocation(new Point(i,j)),mx);
         		}
             }
         }
@@ -441,7 +448,7 @@ public class PlayerHelper {
 	        		if (nearbyIds.get(i).get(j) != null) {
 	        			//result.add(ijToDirection(i,j));
 								int val = this.explorer_grid.getLocation(new Point(i,j));
-								if(val==mn)
+								if(val==mx)
 								{
 									result.add(ijToDirection(i,j));
 								}

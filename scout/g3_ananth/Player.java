@@ -95,12 +95,31 @@ public class Player extends scout.sim.Player {
             }
         }
 
-        else if(this.stage == 1)
+        if(this.stage == 1)
         {
-
+          if(this.ph.moveToStage2(t))
+          {  this.stage = 2;
+            //break;
+          }
           moveDirection = this.ph.getRandomBestMove(nearbyIds);
 
-          
+
+        }
+
+        if(this.stage ==2 )
+        {
+          if(this.id%4==0){
+              moveDirection = toOutpost(moves,"NW", "N","W");
+          } else if(this.id%4==1){
+              moveDirection = toOutpost(moves,"NE", "N","E");
+          }else if(this.id%4==2){
+              moveDirection = toOutpost(moves,"SW", "S","W");
+          }else{
+              moveDirection = toOutpost(moves,"SE", "S","E");
+          }
+          if(moveDirection == "C"){
+              //this.stage = 1;
+          }
         }
         // if(this.stage0 == true){
         //     String peekCycle = this.cycle.peek();
