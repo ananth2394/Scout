@@ -73,22 +73,22 @@ public class ExplorerGrid{
       {
         this.explored[location.x][location.y]=true;
 
-        // for(int i = -1;i<=1;i++)
-        // {
-        //   for(int j = -1;j<=1;j++)
-        //   {
-        //     int curx = location.x +i;
-        //     int cury = location.y+j;
-        //
-        //     if(0<= curx && curx < this.grid.length && 0<= cury && cury <this.grid.length )
-        //     {
-        //       if(!(curx == location.x && cury == location.y))
-        //       {
-        //         this.grid[i][j] = Math.max(this.grid[i][j]-1,0);
-        //       }
-        //     }
-        //   }
-        // }
+        for(int i = -1;i<=1;i++)
+        {
+          for(int j = -1;j<=1;j++)
+          {
+            int curx = location.x +i;
+            int cury = location.y+j;
+
+            if(0<= curx && curx < this.grid.length && 0<= cury && cury <this.grid.length )
+            {
+              if(!(curx == location.x && cury == location.y))
+              {
+                this.grid[curx][cury] = Math.max(this.grid[curx][cury]-1,0);
+              }
+            }
+          }
+        }
       }
     }
     // returns list of enemies or safe locations
@@ -284,10 +284,10 @@ public class ExplorerGrid{
                   continue;
                 }
                 if(grid[i][j] == true){
-                    System.out.print(RED + grid[i][j] + DEFAULT + "  ");
+                    System.out.print(RED + 1 + DEFAULT + "  ");
                 }
                 else if(grid[i][j] == false){
-                    System.out.print(GREEN + grid[i][j] + DEFAULT + "  ");
+                    System.out.print(GREEN + 0 + DEFAULT + "  ");
                 }
                 else{
                     System.out.print(grid[i][j] + "  ");

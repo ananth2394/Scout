@@ -41,7 +41,7 @@ public class Player extends scout.sim.Player {
         this.t = t;
         this.n = n;
         this.landmarkLocations = landmarkLocations;
-        this.ph = new PlayerHelper(n);
+        this.ph = new PlayerHelper(n,this.id);
         this.stage0 = false;
         this.stage = 0;
         // change for each player

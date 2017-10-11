@@ -18,9 +18,11 @@ public class PlayerHelper {
 	public List<Point> relativeSL; // safe loc
 	public AbsoluteGrid grid;
 	public ExplorerGrid explorer_grid;
+	public int id = -1;
 
-	public PlayerHelper(int n) {
+	public PlayerHelper(int n,int id) {
 		this.n = n;
+		this.id = id;
 		this.relativeEL = new ArrayList<Point>();
 		this.relativeSL = new ArrayList<Point>();
 		this.grid = new AbsoluteGrid(n);
@@ -134,6 +136,11 @@ public class PlayerHelper {
 			this.explorer_grid.setExplored(loc,true);
 		}
 
+		 //this.grid.printGrid();
+		//this.explorer_grid.printGrid();
+		//if(id==1)
+			//this.explorer_grid.printGrid();
+			//this.explorer_grid.printGridE();
 	}
 
 	public boolean hitBoundary() {
@@ -413,7 +420,7 @@ public class PlayerHelper {
 
 		public boolean moveToStage2(int time)
 		{
-			if(time<=50)
+			if(time<=2.5*(n/2))
 				return true;
 			else
 			return false;
