@@ -5,6 +5,21 @@ import scout.g3_ananth.*;
 import java.util.*;
 
 public class PlayerHelper {
+
+	// class ShortestPathFinder{
+	//
+	// 	Pair<List<String>,Integer> shortestPathTo(Point P)
+	// 	{
+	//
+	// 	}
+	//
+	// 	Pair<List<String>,Integer> shortestPathToOutPost()
+	// 	{
+	//
+	// 	}
+	// }
+
+
 	private int n;
 	private int absolute_x = -1;
 	private int absolute_y = -1;
@@ -19,6 +34,8 @@ public class PlayerHelper {
 	public AbsoluteGrid grid;
 	public ExplorerGrid explorer_grid;
 	public int id = -1;
+
+
 
 	public PlayerHelper(int n,int id) {
 		this.n = n;
@@ -271,13 +288,13 @@ public class PlayerHelper {
 	    this.setAbsoluteY(gathered_absolute_Y);
 
 	    this.tryCalibration();
-	    // for(CellObject obj : concurrentObjects) {
-	    // 	if (obj instanceof Player) {
-	    // 		((Player)obj).ph.setAbsoluteX(gathered_absolute_X);
-	    // 		((Player)obj).ph.setAbsoluteY(gathered_absolute_Y);
-	    // 		((Player)obj).ph.tryCalibration();
-	    // 	}
-	    // }
+	    for(CellObject obj : concurrentObjects) {
+	    	if (obj instanceof Player) {
+	    		((Player)obj).ph.setAbsoluteX(gathered_absolute_X);
+	    		((Player)obj).ph.setAbsoluteY(gathered_absolute_Y);
+	    		((Player)obj).ph.tryCalibration();
+	    	}
+	    }
 
 
 
@@ -301,14 +318,14 @@ public class PlayerHelper {
 				this.explorer_grid.setGrid(mergedGridE.getGrid());
 				this.explorer_grid.setGridE(mergedGridE.getGridE());
 
-	    	// for(CellObject obj : concurrentObjects) {
-	    	// 	if (obj instanceof Player) {
-	    	// 		((Player)obj).ph.grid.setGrid(mergedGrid.getGrid());
-				// 		((Player)obj).ph.explorer_grid.setGrid(mergedGridE.getGrid());
-				// 		((Player)obj).ph.explorer_grid.setGridE(mergedGridE.getGridE());
-				//
-	    	// 	}
-	    	// }
+	    	for(CellObject obj : concurrentObjects) {
+	    		if (obj instanceof Player) {
+	    			((Player)obj).ph.grid.setGrid(mergedGrid.getGrid());
+						((Player)obj).ph.explorer_grid.setGrid(mergedGridE.getGrid());
+						((Player)obj).ph.explorer_grid.setGridE(mergedGridE.getGridE());
+
+	    		}
+	    	}
 	    }
 	    else {
 	    	int pseudoAbsoluteX = 0;
@@ -372,26 +389,26 @@ public class PlayerHelper {
                 }
 			}
 
-			// update concurrent players
-			// for(CellObject obj : concurrentObjects) {
-	    // 		if (obj instanceof Player) {
-	    // 			delta_x = ((Player)obj).ph.getRelativeX() - pseudoAbsoluteX;
-	    // 			delta_y = ((Player)obj).ph.getRelativeY() - pseudoAbsoluteY;
-			// 		for (Point p: allEnemyLoc) {
-			// 			Point consideredLocation = new Point(p.x + delta_x, p.y + delta_y);
-			// 			if(!((Player)obj).ph.relativeEL.contains(consideredLocation)) {
-		  //                   ((Player)obj).ph.relativeEL.add(consideredLocation);
-		  //               }
-			// 		}
-			//
-			// 		for (Point p: allSafeLoc) {
-			// 			Point consideredLocation = new Point(p.x + delta_x, p.y + delta_y);
-			// 			if(!((Player)obj).ph.relativeSL.contains(consideredLocation)) {
-		  //                   ((Player)obj).ph.relativeSL.add(consideredLocation);
-		  //               }
-			// 		}
-	    // 		}
-	    // 	}
+			//update concurrent players
+			for(CellObject obj : concurrentObjects) {
+	    		if (obj instanceof Player) {
+	    			delta_x = ((Player)obj).ph.getRelativeX() - pseudoAbsoluteX;
+	    			delta_y = ((Player)obj).ph.getRelativeY() - pseudoAbsoluteY;
+					for (Point p: allEnemyLoc) {
+						Point consideredLocation = new Point(p.x + delta_x, p.y + delta_y);
+						if(!((Player)obj).ph.relativeEL.contains(consideredLocation)) {
+		                    ((Player)obj).ph.relativeEL.add(consideredLocation);
+		                }
+					}
+
+					for (Point p: allSafeLoc) {
+						Point consideredLocation = new Point(p.x + delta_x, p.y + delta_y);
+						if(!((Player)obj).ph.relativeSL.contains(consideredLocation)) {
+		                    ((Player)obj).ph.relativeSL.add(consideredLocation);
+		                }
+					}
+	    		}
+	    	}
 
 	    }
 			// this.grid.printGrid();
