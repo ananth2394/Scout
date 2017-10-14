@@ -15,16 +15,6 @@ public class Player extends scout.sim.Player {
         }
     }
 
-    private class PlayerState {
-        // track board info, move history, enemy and safe locations
-        List<Point> enemyLocations;
-        List<Point> safeLocations;
-        List<Point> history;
-
-        boolean oriented;
-        String[][] board;
-    }
-
     /**
     * better to use init instead of constructor, don't modify ID or simulator will error
     */
@@ -42,10 +32,6 @@ public class Player extends scout.sim.Player {
         }
     }
 
-    public void stub() {
-        ;
-    }
-
     /**
     *   Called at the start
     */
@@ -58,7 +44,6 @@ public class Player extends scout.sim.Player {
     public Point move(ArrayList<ArrayList<ArrayList<String>>> nearbyIds, List<CellObject> concurrentObjects) {
         return directionalPlayer.move(nearbyIds, concurrentObjects);
     }
-
 
     @Override
     public void communicate(ArrayList<ArrayList<ArrayList<String>>> nearbyIds, List<CellObject> concurrentObjects) {

@@ -39,6 +39,10 @@ function rand(n) {
     return Math.floor((Math.random() * n));
 }
 
+Number.prototype.hashCode = function(){
+    return (this*2654435761) % 4294967296;
+}
+
 function draw_dots(min_x, min_y, max_x, max_y, rows, cols, num, xcoords, ycoords, color, IDs, isenemy) {
     var ctx = document.getElementById('canvas').getContext('2d');
     for(var i = 0 ; i < num ; ++ i) {
@@ -48,10 +52,11 @@ function draw_dots(min_x, min_y, max_x, max_y, rows, cols, num, xcoords, ycoords
         var locationx = min_x + xcoords[i] * (max_x - min_x) / cols + (max_x - min_x) / (4*cols);
         var locationy = min_y + ycoords[i] * (max_y - min_y) / rows+ (max_y - min_y) / (4*rows);
         if(!isenemy) {
-            locationx +=  rand((max_x - min_x) / (2*cols));
-            locationy +=  rand((max_y - min_y) / (2*rows))
+            locationx +=  IDs[i].hashCode()%((max_x - min_x) / (2*cols));
+            locationy +=  IDs[i].hashCode()%((max_y - min_y) / (2*rows))
         }
-        var radius = 3;
+        var radius = 4;
+        if(rows > 25) radius = 3;
         if(rows > 50) radius = 2;
         ctx.arc(
             locationx, 
@@ -60,7 +65,7 @@ function draw_dots(min_x, min_y, max_x, max_y, rows, cols, num, xcoords, ycoords
         ctx.fillStyle = color;
         ctx.fill();
         if(IDs != null) {
-            ctx.font = "10px Arial";
+            ctx.font = "14px Arial";
             ctx.textAlign = "left";
             ctx.lineWidth = 1;
             ctx.strokeStyle = "black";
@@ -157,7 +162,7 @@ function draw_outpost(min_x, min_y, max_x, max_y, rows, cols) {
     ctx.fill();
 }
 
-function draw_side(min_x, min_y, max_x, max_y, group, turns, colors)
+function draw_side(min_x, min_y, max_x, max_y, group, turns, colors, score)
 {
 	var canvas = document.getElementById("canvas");
 	var ctx = canvas.getContext("2d");
@@ -172,11 +177,13 @@ function draw_side(min_x, min_y, max_x, max_y, group, turns, colors)
     ctx.strokeStyle = "darkgrey";
     ctx.strokeText("Player: " + group,        min_x, min_y + 30);
     ctx.strokeText("Turns left: " + turns,         min_x, min_y + 60);
+    ctx.strokeText("Score: " + score,         min_x, min_y + 90);
     // ctx.strokeText("CPU time: " + cpu + " s", min_x, min_y + 90);
     // ctx.strokeText("Legend:", min_x, min_y + 150);
     ctx.fillStyle = "darkblue";
     ctx.fillText("Player: " + group,        min_x, min_y + 30);
     ctx.fillText("Turns left: " + turns,         min_x, min_y + 60);
+    ctx.fillText("Score: " + score,         min_x, min_y + 90);
 }
 
 
@@ -216,7 +223,7 @@ function process(data)
     for(var i = 0 ; i < s ; ++ i) {
         scoutIDs[i] = Number(data[7 + 2*s + 2*e + 2*landmarkCount + i]);
     }
-
+    var score = Number(data[7 + 2*s + 2*e + 2*landmarkCount + s]);
     console.log("data", data);
     if (refresh < 0.0) refresh = -1;
     else refresh = Math.round(refresh);
@@ -231,7 +238,7 @@ function process(data)
     draw_landmarks(300, 50, 900, 650, n+2, n+2, landmarkCount, landmarkx, landmarky, "limegreen")
     draw_dots(300, 50, 900, 650, n+2, n+2, e, enemyx, enemyy, "red", null, true);
     draw_dots(300, 50, 900, 650, n+2, n+2, s, scoutx, scouty, "blue", scoutIDs, false);
-    draw_side ( 10,  40,  190, 690, group, turns_left, colors);
+    draw_side ( 10,  40,  190, 690, group, turns_left, colors, score);
     //draw_outpost(250, 50, 850, 650 , n+2, n+2);
     //draw_shape(250,  50,  850, 650, 50, 50, buildings, cuts, colors, types, highlight == 0);
     return refresh;
