@@ -24,8 +24,8 @@ public abstract class DirectionalPlayer extends scout.sim.Player {
 
     int curOutpost;
 
-    int accX = 0;
-    int accY = 0;
+    int accX;
+    int accY;
     boolean oriented;
     boolean orientedX;
     boolean orientedY;
@@ -130,53 +130,6 @@ public abstract class DirectionalPlayer extends scout.sim.Player {
             }
         }
 
-        int playerCount = 0;
-        for(CellObject obj : concurrentObjects) {
-            if (obj instanceof Player) {
-                playerCount++;
-                //System.out.println(playerCount);
-                if(!shared[((Player) obj).id]) {
-                    ((Player) obj).shareInfo(safeLocations, enemyLocations);
-                    shared[((Player) obj).id] = true;
-                }
-                if(phase == PlayerPhase.MeetCenter && playerCount == s) {
-                    phase = PlayerPhase.ReturnOutpost;
-                }
-            } else if (obj instanceof Enemy) {
-
-            } else if (obj instanceof Landmark) {
-                x = ((Landmark) obj).getLocation().x;
-                y = ((Landmark) obj).getLocation().y;
-                oriented = true;
-                orientedX = true;
-                orientedY = true;
-            } else if (obj instanceof Outpost) {
-                outpostCount++;
-                if(outpostCount > 1 && x == outpostLocations.get(curOutpost).x && y == outpostLocations.get(curOutpost).y) {
-                    curOutpost = (curOutpost + 1) % 4;
-                }
-                if(outpostCount == 2) {
-                } else if(outpostCount == 1) {
-                    oriented = true;
-                    orientedX = true;
-                    orientedY = true;
-                    // Move NW
-                    setOutpost();
-                }
-                Object data = ((Outpost) obj).getData();
-                
-                if(data == null) {
-                    ((Outpost) obj).setData((Object)"yay!!");
-                }
-                for(Point safe : safeLocations) {
-                    ((Outpost) obj).addSafeLocation(safe);
-                }
-                for(Point unsafe : enemyLocations) {
-                    ((Outpost) obj).addEnemyLocation(unsafe);
-                }
-            }
-        }
-
         switch(phase) {
             case JoinOutpost:
                 joinOutpost();
@@ -250,6 +203,51 @@ public abstract class DirectionalPlayer extends scout.sim.Player {
 
     @Override
     public void communicate(ArrayList<ArrayList<ArrayList<String>>> nearbyIds, List<CellObject> concurrentObjects) {
+        int playerCount = 0;
+        for(CellObject obj : concurrentObjects) {
+            if (obj instanceof Player) {
+                playerCount++;
+                if(!shared[((Player) obj).id]) {
+                    ((Player) obj).shareInfo(safeLocations, enemyLocations);
+                    shared[((Player) obj).id] = true;
+                }
+                if(phase == PlayerPhase.MeetCenter && playerCount == s) {
+                    phase = PlayerPhase.ReturnOutpost;
+                }
+            } else if (obj instanceof Enemy) {
+
+            } else if (obj instanceof Landmark) {
+                x = ((Landmark) obj).getLocation().x;
+                y = ((Landmark) obj).getLocation().y;
+                oriented = true;
+                orientedX = true;
+                orientedY = true;
+            } else if (obj instanceof Outpost) {
+                outpostCount++;
+                if(outpostCount > 1 && x == outpostLocations.get(curOutpost).x && y == outpostLocations.get(curOutpost).y) {
+                    curOutpost = (curOutpost + 1) % 4;
+                }
+                if(outpostCount == 2) {
+                } else if(outpostCount == 1) {
+                    oriented = true;
+                    orientedX = true;
+                    orientedY = true;
+                    // Move NW
+                    setOutpost();
+                }
+                Object data = ((Outpost) obj).getData();
+                
+                if(data == null) {
+                    ((Outpost) obj).setData((Object)"yay!!");
+                }
+                for(Point safe : safeLocations) {
+                    ((Outpost) obj).addSafeLocation(safe);
+                }
+                for(Point unsafe : enemyLocations) {
+                    ((Outpost) obj).addEnemyLocation(unsafe);
+                }
+            }
+        }
         --t;
     }
 
@@ -258,7 +256,6 @@ public abstract class DirectionalPlayer extends scout.sim.Player {
         x += this.position.x;
         y += this.position.y;
     }
-
 
     public void findSection() {
         moveTo(startPos.x, startPos.y, PlayerPhase.Explore);
@@ -279,7 +276,7 @@ public abstract class DirectionalPlayer extends scout.sim.Player {
     }
 
     public void explore() {
-        if(startIndex > endIndex || t <= 4*n) {
+        if(startIndex > endIndex || t <= 6*n) {
             setPosition(0,0);
             phase = PlayerPhase.MeetCenter;
         } else {
