@@ -54,7 +54,17 @@ public class Search2
     initDistances(); // Init
 
   }
+  public void printGrids()
+  {
+    System.out.println("Grid Space: ");
+    gridspace.printGrid();
 
+    System.out.println("Centre Distances");
+    C_dist.printGrid();
+
+    System.out.println("Min distance to any outpost");
+    overall_dist.printGrid();
+  }
   public void initDistances() // Initialize the distance arrays
   {
 
@@ -92,9 +102,7 @@ public class Search2
     dir.add(new Point(-1,1));
     dir.add(new Point(-1,0));
 
-    gridspace.printGrid();
-    C_dist.printGrid();
-    overall_dist.printGrid();
+
 
 
   }
@@ -208,10 +216,10 @@ public class Search2
     depth = 5; // Comment this out when you have a good idea of what depth to have
 
     Queue<Point> q1 = new LinkedList<>();
-    HashMap<Point,Boolean> seen = new HashMap<Point,Boolean>();
+    Set<Point> seen = new HashSet<Point>();
 
     UpdateOverallDistLocation(loc);
-    seen.put(loc,true);
+    seen.add(loc);
     q1.add(loc);
 
     int d= 0;
@@ -224,10 +232,10 @@ public class Search2
 
       for(Point neb: nebs)
       {
-        if(!seen.get(neb))
+        if(!seen.contains(neb))
         {
           boolean val = UpdateOverallDistLocation(neb);
-
+          seen.add(neb);
           if(val)
           {
             q1.add(neb);
@@ -244,10 +252,10 @@ public class Search2
     depth = 5; // Comment this out when you have a good idea of what depth to have
 
     Queue<Point> q1 = new LinkedList<>();
-    HashMap<Point,Boolean> seen = new HashMap<Point,Boolean>();
+    Set<Point> seen = new HashSet<Point>();
 
     UpdateCentralDistLocation(loc);
-    seen.put(loc,true);
+    seen.add(loc);
     q1.add(loc);
 
     int d= 0;
@@ -260,10 +268,10 @@ public class Search2
 
       for(Point neb: nebs)
       {
-        if(!seen.get(neb))
+        if(!seen.contains(neb))
         {
           boolean val = UpdateCentralDistLocation(neb);
-
+          seen.add(neb);
           if(val)
           {
             q1.add(neb);
