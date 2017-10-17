@@ -24,8 +24,9 @@ public abstract class DirectionalPlayer extends scout.sim.Player {
 
     int curOutpost;
 
-    int accX;
-    int accY;
+    int xOffset;
+    int yOffset;
+
     boolean oriented;
     boolean orientedX;
     boolean orientedY;
@@ -116,7 +117,7 @@ public abstract class DirectionalPlayer extends scout.sim.Player {
                         }
                     }
                 } else {
-                    Point consideredLocation = new Point(accX + i - 1, accY + j - 1);
+                    Point consideredLocation = new Point(xOffset + i - 1, yOffset + j - 1);
                     if(safe) {
                         if(!safeRelativeLocations.contains(consideredLocation)) {
                             safeRelativeLocations.add(consideredLocation);
@@ -226,12 +227,11 @@ public abstract class DirectionalPlayer extends scout.sim.Player {
                 outpostCount++;
                 if(outpostCount > 1 && x == outpostLocations.get(curOutpost).x && y == outpostLocations.get(curOutpost).y) {
                     curOutpost = (curOutpost + 1) % 4;
-                }
-                if(outpostCount == 2) {
                 } else if(outpostCount == 1) {
                     oriented = true;
                     orientedX = true;
                     orientedY = true;
+                    relativeToAbsolutePositions();
                     // Move NW
                     setOutpost();
                 }
@@ -255,6 +255,10 @@ public abstract class DirectionalPlayer extends scout.sim.Player {
     public void moveFinished() {
         x += this.position.x;
         y += this.position.y;
+        if(!oriented) {
+            xOffset += this.position.x;
+            yOffset += this.position.y;
+        }
     }
 
     public void findSection() {
@@ -293,4 +297,28 @@ public abstract class DirectionalPlayer extends scout.sim.Player {
         this.position.x = x;
         this.position.y = y;
     }
+
+    private void relativeToAbsolutePositions() {
+        Point originalPosition = new Point(outpostLocations.get(0).x - xOffset, outpostLocations.get(0).y - yOffset);
+        for(Point p : enemyRelativeLocations) {
+            Point absPoint = new Point(originalPosition.x + p.x, originalPosition.y + p.y);
+            if(!enemyLocations.contains(absPoint)) {
+                enemyLocations.add(absPoint);
+            }
+        }
+
+        for(Point p : safeRelativeLocations) {
+            Point absPoint = new Point(originalPosition.x + p.x, originalPosition.y + p.y);
+            if(!safeLocations.contains(absPoint)) {
+                safeLocations.add(absPoint);
+            }
+        }
+    }
+
+    /*
+    private int threshold() {
+        double enemyRatio = enemyLocations.size()/(enemyLocations.size() + safeLocations.size());
+        double threshold = 1.5*
+    }
+    */
 }
