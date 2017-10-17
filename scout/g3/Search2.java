@@ -23,8 +23,8 @@ public class Search2
 
   public AbsoluteGrid C_dist;
 
-  public int ortho_coeff = 3;
-  public int diag_coeff = 4; // change this based on enemy fraction we expect
+  public int ortho_coeff = 6;
+  public int diag_coeff = 9; // change this based on enemy fraction we expect
 
   public int n;
   public ArrayList<Point> dir = new ArrayList<Point>();
@@ -52,6 +52,35 @@ public class Search2
 
 
     initDistances(); // Init
+
+  }
+
+  public Search2(int n, int ortho_coeff, int diag_coeff)
+  {
+    this.gridspace = new AbsoluteGrid(n);
+    this.n = n;
+
+    this.O1_dist = new AbsoluteGrid(n);
+    this.O2_dist = new AbsoluteGrid(n);
+    this.O3_dist = new AbsoluteGrid(n);
+    this.O4_dist = new AbsoluteGrid(n);
+
+
+    this.overall_dist = new AbsoluteGrid(n);
+    this.C_dist = new AbsoluteGrid(n);
+
+    this.Outpost1 = new Point(0,0);
+    this.Outpost2 = new Point(0,n+1);
+    this.Outpost3 = new Point(n+1,n+1);
+    this.Outpost4 = new Point(n+1,0); // Ordered clockwise you can change it if you need another ordering.
+
+    this.Centre = new Point(n/2,n/2); // Update this for a different centre.
+
+    this.ortho_coeff = ortho_coeff;
+    this.diag_coeff = diag_coeff;
+
+    initDistances(); // Init
+
 
   }
   public void printGrids()

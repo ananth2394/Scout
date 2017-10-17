@@ -14,7 +14,15 @@ public class Test
 
     searcher.printGrids();
 
-    searcher.setSafe(new Point(3,3));
+    for(int i = 2;i<=4;i++)
+    {
+      for(int j = 2;j<=4;j++)
+      {
+        searcher.setSafe(new Point(i,j));
+      }
+    }
+
+
 
     searcher.UpdateOverallDistAndPropogate(new Point(3,3),5);
     searcher.UpdateCentralDistAndPropogate(new Point(3,3),5);
