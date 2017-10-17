@@ -23,11 +23,11 @@ public class Search2
 
   public AbsoluteGrid C_dist;
 
-  public int ortho_coeff = 2;
-  public int diag_coeff = 3; // change this based on enemy fraction we expect
+  public int ortho_coeff = 3;
+  public int diag_coeff = 4; // change this based on enemy fraction we expect
 
   public int n;
-  public ArrayList<Point> dir;
+  public ArrayList<Point> dir = new ArrayList<Point>();
 
   public Search2(int n) // create a brand new grid
   {
@@ -91,6 +91,11 @@ public class Search2
     dir.add(new Point(0,1));
     dir.add(new Point(-1,1));
     dir.add(new Point(-1,0));
+
+    gridspace.printGrid();
+    C_dist.printGrid();
+    overall_dist.printGrid();
+
 
   }
 
