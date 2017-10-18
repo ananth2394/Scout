@@ -37,6 +37,9 @@ public class Player extends scout.sim.Player {
     */
     @Override
     public void init(String id, int s, int n, int t, List<Point> landmarkLocations) {
+        if(s < 4) {
+            directionalPlayer = new SingleQuadrantPlayer(this.id);
+        }
         directionalPlayer.init(id, s, n, t, landmarkLocations);
     }
 

@@ -225,7 +225,7 @@ public abstract class DirectionalPlayer extends scout.sim.Player {
                 orientedY = true;
             } else if (obj instanceof Outpost) {
                 outpostCount++;
-                if(outpostCount > 1 && x == outpostLocations.get(curOutpost).x && y == outpostLocations.get(curOutpost).y) {
+                if(s < 4 && outpostCount > 1 && x == outpostLocations.get(curOutpost).x && y == outpostLocations.get(curOutpost).y) {
                     curOutpost = (curOutpost + 1) % 4;
                 } else if(outpostCount == 1) {
                     oriented = true;
@@ -255,7 +255,7 @@ public abstract class DirectionalPlayer extends scout.sim.Player {
     public void moveFinished() {
         x += this.position.x;
         y += this.position.y;
-        if(!oriented) {
+        if(outpostCount < 1) {
             xOffset += this.position.x;
             yOffset += this.position.y;
         }
@@ -271,7 +271,7 @@ public abstract class DirectionalPlayer extends scout.sim.Player {
     }
 
     public void returnOutpost() {
-        moveTo(outpostLocations.get(0).x, outpostLocations.get(0).y, PlayerPhase.ReturnOutpost);
+        moveTo(outpostLocations.get(curOutpost).x, outpostLocations.get(curOutpost).y, PlayerPhase.ReturnOutpost);
     }
 
 
@@ -280,7 +280,7 @@ public abstract class DirectionalPlayer extends scout.sim.Player {
     }
 
     public void explore() {
-        if(startIndex > endIndex || t <= 6*n) {
+        if(startIndex > endIndex || t <= threshold()) {
             setPosition(0,0);
             phase = PlayerPhase.MeetCenter;
         } else {
@@ -315,10 +315,19 @@ public abstract class DirectionalPlayer extends scout.sim.Player {
         }
     }
 
-    /*
-    private int threshold() {
-        double enemyRatio = enemyLocations.size()/(enemyLocations.size() + safeLocations.size());
-        double threshold = 1.5*
+    private double threshold() {
+        if(enemyLocations.size() > 0) {
+            double enemyRatio = (enemyLocations.size()*1.0)/(enemyLocations.size() + safeLocations.size());
+            int extraTime = 0;
+            if(s < 4) {
+                extraTime = 2*(4 - s)*n;
+            }
+
+            double threshold = 1.3*n*(9*enemyRatio + 3*(1-enemyRatio)) + extraTime;
+            return threshold;
+        } else {
+            return 3*n;
+        }
+
     }
-    */
 }
