@@ -3,6 +3,10 @@ package scout.g3;
 import scout.sim.*;
 import java.util.*;
 
+
+/**
+ * Player used when s < 3. Treats the whole board as a single quadrant.
+ */
 public class SingleQuadrantPlayer extends DirectionalPlayer {
 
     public SingleQuadrantPlayer(int id) {

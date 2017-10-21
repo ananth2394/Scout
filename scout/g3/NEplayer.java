@@ -109,8 +109,6 @@ public class NEplayer extends DirectionalPlayer {
             topX += nextX;
             topY += nextY;
 
-            //System.out.println(topX + " " + topY);
-
             while(nextX != 0 || nextY != 0) {
                 int nextDx = 0;
                 int nextDy = 0;

@@ -68,7 +68,7 @@ public abstract class DirectionalPlayer extends scout.sim.Player {
         this.n = n;
         this.s = s;
 
-        shared = new boolean[s];
+        shared = new boolean[4];
         middle = new Point((n+1)/2, (n+1)/2);
         phase = PlayerPhase.JoinOutpost;
         position = new Point(0, 0);
@@ -208,9 +208,9 @@ public abstract class DirectionalPlayer extends scout.sim.Player {
         for(CellObject obj : concurrentObjects) {
             if (obj instanceof Player) {
                 playerCount++;
-                if(!shared[((Player) obj).id]) {
+                if(!shared[((Player) obj).id % 4]) {
                     ((Player) obj).shareInfo(safeLocations, enemyLocations);
-                    shared[((Player) obj).id] = true;
+                    shared[((Player) obj).id % 4] = true;
                 }
                 if(phase == PlayerPhase.MeetCenter && playerCount == s) {
                     phase = PlayerPhase.ReturnOutpost;
